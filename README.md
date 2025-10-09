@@ -9,6 +9,12 @@ https://medium.com/ntust-aivc/opencv-fourier-transform-d9811aaac2d5
 https://www.jezzamon.com/fourier/index.html
 https://github.com/Jezzamonn/fourier
 
+https://github.com/DaAnIV/FourierFromSVG
+
+
+https://www.geeksforgeeks.org/python/flask-creating-first-simple-application/
+
+
 PLAN:
 
 [later: imort image]
