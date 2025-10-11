@@ -1,6 +1,7 @@
 #ifndef DRAW_INPUT_H
 #define DRAW_INPUT_H
 
+#include <SDL2/SDL.h>
 #include "geometry.h"
 
 
@@ -17,7 +18,7 @@ void draw_input_init(DrawInput *di);
 void draw_input_free(DrawInput *di);
 void draw_input_clear(DrawInput *di); // think about this - difference between pl and di
 
-void draw_input_handling(DrawInput *di, const void *event_ptr);
+void draw_input_handling(DrawInput *di, const SDL_Event *e);
 // clarify SDL_event syntax
 
 

@@ -63,6 +63,10 @@ int polyline_reserve(Polyline *pl, size_t desired_cap){
         new_cap *= 2;
     }
 
+    if (new_cap > SIZE_MAX / sizeof(Vec2)){
+        return 0;
+    }
+    
     void *p = realloc(pl->pts, new_cap * sizeof(Vec2));
 
     if(!p) return 0; // malloc failure

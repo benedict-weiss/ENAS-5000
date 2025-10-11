@@ -4,6 +4,7 @@
 
 int main(){
 
+    // not checking SDL objects for failure - but working fine so far lol
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* win = SDL_CreateWindow("test_input",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
@@ -29,12 +30,14 @@ int main(){
         SDL_SetRenderDrawColor(ren, 0, 0, 0, 255); // line colour - black
         const Polyline *pl = &di.line;
 
-        for (size_t i = 1; i < pl->len; ++i) { // check loop conditions here
-            SDL_RenderDrawLine(ren,
-                (int)pl->pts[i-1].x, (int)pl->pts[i-1].y,
-                (int)pl->pts[i].x, (int)pl->pts[i].y);
-        }
+        if (pl->len > 1 && pl->pts) { // should always be true
+            for (size_t i = 1; i < pl->len; ++i) { // check loop conditions here
+                SDL_RenderDrawLine(ren,
+                    (int)pl->pts[i-1].x, (int)pl->pts[i-1].y,
+                    (int)pl->pts[i].x, (int)pl->pts[i].y);
+            }
 
+        }
         SDL_RenderPresent(ren);
     }
 

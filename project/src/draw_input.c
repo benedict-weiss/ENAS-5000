@@ -41,8 +41,7 @@ void try_add_point(DrawInput *di, float x, float y){
     
 }
 
-void draw_input_handling(DrawInput *di, const void *event_ptr){
-    const SDL_Event* e = (const SDL_Event*)event_ptr; // careful with casting here - potential for undefined behaviour
+void draw_input_handling(DrawInput *di, const SDL_Event *e){
 
     switch(e->type){
 
