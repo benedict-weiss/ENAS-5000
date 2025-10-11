@@ -16,7 +16,7 @@ SDL_LDFLAGS = $(shell sdl2-config --libs)
 BIN = ./bin
 
 # Default target: build SDL input test
-all: $(BIN)/test_input
+all: $(BIN)/main
 
 # --- Build rules ---
 
@@ -25,14 +25,14 @@ $(BIN):
 	mkdir -p $(BIN)
 
 # Build the test_input executable
-$(BIN)/test_input: $(SRC) ./tests/test_input.c | $(BIN)
+$(BIN)/main: $(SRC) ./main.c | $(BIN)
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) -I$(INCLUDE) $^ -o $@ $(SDL_LDFLAGS)
 
 # --- Utility targets ---
 
 run:
-	@echo "Running test_input..."
-	@$(BIN)/test_input
+	@echo "Running main..."
+	@$(BIN)/main
 
 clean:
 	rm -rf $(BIN)/*
