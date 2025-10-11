@@ -6,7 +6,7 @@
 CC = gcc
 CFLAGS = -std=c11 -g -Wall -Werror
 INCLUDE = ./include
-SRC = ./src/geometry.c ./src/draw_input.c ./src/raster.c
+SRC = ./src/geometry.c ./src/draw_input.c ./src/raster.c ./src/fourier.c
 
 # SDL2 configuration (uses sdl2-config to find includes and libs)
 SDL_CFLAGS  = $(shell sdl2-config --cflags)

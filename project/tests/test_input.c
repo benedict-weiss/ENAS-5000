@@ -2,8 +2,10 @@
 #include "geometry.h"
 #include "draw_input.h"
 #include "raster.h"
+#include "fourier.h"
 
 // #define RASTER_DISPLAY 1
+#define PIXEL_GAP 20
 
 int main(){
 
@@ -19,9 +21,10 @@ int main(){
 
     // window positioning
     int win_x, win_y;
+    int offset = (RASTER_SIZE / 2) + (PIXEL_GAP / 2);
     SDL_GetWindowPosition(win_draw, &win_x, &win_y);
-    SDL_SetWindowPosition(win_draw, win_x - 270, win_y);
-    SDL_SetWindowPosition(win_raster, win_x + 270, win_y);
+    SDL_SetWindowPosition(win_draw, win_x - offset, win_y);
+    SDL_SetWindowPosition(win_raster, win_x + offset, win_y);
 
     // windows at front
     SDL_ShowWindow(win_draw);
@@ -42,7 +45,7 @@ int main(){
 
     static uint8_t canvas[RASTER_SIZE * RASTER_SIZE];
 
-        int active = 1;
+    int active = 1;
 
     while (active) {
         SDL_Event e;
@@ -95,6 +98,8 @@ int main(){
         raster_clear(canvas);
         raster_polyline(canvas, &di.line, 255); // white line colour
 
+        // fourier_spectrum(canvas, RASTER_SIZE, RASTER_SIZE);
+
         void *pixels = NULL; // raw ptr
         uint8_t *dest = NULL; // writing into here
         int pitch = 0;
@@ -116,7 +121,10 @@ int main(){
         SDL_SetRenderDrawColor(ren_raster, 0, 0, 0, 255); // background colour - black
         SDL_RenderClear(ren_raster);
         SDL_RenderCopy(ren_raster, tex_raster, NULL, NULL);
-        SDL_RenderPresent(ren_raster);
+        if(di.is_drawing == 0){
+            SDL_RenderPresent(ren_raster);
+        }
+
     }
 
     draw_input_free(&di);
