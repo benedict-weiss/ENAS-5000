@@ -1,0 +1,71 @@
+#include "draw_input.h"
+
+#include <SDL2/SDL.h>
+#include <math.h>
+
+#define MIN_DIST 1.0f
+#define MAX_PTS 10
+
+void draw_input_init(DrawInput *di){
+    polyline_int(&di->line);
+    di->is_drawing = 0;
+    di->min_dist = MIN_DIST;
+    di->max_pts = 0; // should set to MAX_PTS at initialisation?
+}
+
+void draw_input_free(DrawInput *di){
+    polyline_free(&di->line);
+    di->is_drawing = 0;
+}
+
+void draw_input_clear(DrawInput *di){
+    polyline_clear(&di->line);
+    di->is_drawing = 0;
+}
+
+
+// what if this fails? consider backup options
+void try_add_point(DrawInput *di, float x, float y){
+    if(di->max_pts && di->line.len >= di->max_pts) return; // too many points
+    Vec2 p = {x, y};
+    if (di->line.len > 0){
+        Vec2 last = di->line.pts[di->line.len - 1];
+        float add_dist = vec2_dist(last, p);
+        if (add_dist < MIN_DIST) return;
+    }
+    polyline_push(&di->line, p);
+}
+
+void draw_input_handling(DrawInput *di, const void *event_ptr){
+    const SDL_Event* e = (const SDL_Event*)event_ptr; // careful with casting here - potential for undefined behaviour
+
+    switch(e->type){
+
+        case SDL_MOUSEBUTTONDOWN:
+            if(e->button.button == SDL_BUTTON_LEFT){
+                draw_input_clear(di); // only one line at a time
+                di->is_drawing = 1;
+                try_add_point(di, (float)e->button.x, (float)e->button.y);
+            }
+            break;
+
+        case SDL_MOUSEMOTION:
+            if(di->is_drawing){
+                try_add_point(di, (float)e->button.x, (float)e->button.y);
+            }
+            break;
+
+        case SDL_MOUSEBUTTONUP:
+            if(e->button.button == SDL_BUTTON_LEFT){
+                di->is_drawing = 0;
+            }
+            break;
+
+    }
+}
+
+
+
+
+
+

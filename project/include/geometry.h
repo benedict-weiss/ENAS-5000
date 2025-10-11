@@ -34,6 +34,7 @@ int polyline_reserve(Polyline *pl, size_t desired_cap);
 // returns 0 if not enough capacity and the reserve function fails
 int polyline_push(Polyline *pl, Vec2 p);
 
+// need to think whether this is sufficient
 void polyline_clear(Polyline *pl);
 
 // returns 1 if polyline has no pts, otherwise 0 if non-empty

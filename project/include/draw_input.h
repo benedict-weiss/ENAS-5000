@@ -7,7 +7,7 @@
 // think about this - careful with types
 typedef struct {
     Polyline line;
-    bool is_drawing;
+    int is_drawing;
     float min_dist;
     size_t max_pts;
 } DrawInput;
