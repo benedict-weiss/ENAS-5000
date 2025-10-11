@@ -24,10 +24,19 @@ Vec2 vec2_scale(Vec2 a, float s);
 void polyline_init(Polyline *pl);
 void polyline_free(Polyline *pl);
 
+// reserves space on heap for polyline with size desired_cap
+// returns 1 if allocated successfully or there's already capacity
+// returns 0 in case of malloc failure
 int polyline_reserve(Polyline *pl, size_t desired_cap);
+
+// adds Vec2 point to polyline
+// returns 1 if successful
+// returns 0 if not enough capacity and the reserve function fails
 int polyline_push(Polyline *pl, Vec2 p);
+
 void polyline_clear(Polyline *pl);
 
+// returns 1 if polyline has no pts, otherwise 0 if non-empty
 int polyline_empty(Polyline *pl);
 
 #endif
