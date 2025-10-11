@@ -41,3 +41,7 @@ void polyline_clear(Polyline *pl);
 int polyline_empty(Polyline *pl);
 
 #endif
+
+
+// NOTES:
+// polyline_clear just sets len to 0 - make sure use this variable to check elsewhere

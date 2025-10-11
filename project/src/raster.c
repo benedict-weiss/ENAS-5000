@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 
 // basic implementation of Bresenham line algorithm found online (https://gist.github.com/bert/1085538)
@@ -21,15 +22,14 @@ void raster_line(uint8_t *img, int x0, int y0, int x1, int y1, uint8_t val){
     }
 }
 
-
 void raster_clear(uint8_t *img){
     memset(img, 0, RASTER_SIZE * RASTER_SIZE);
 }
 
-void raster_polyline(uint8_t *img, Polyline *pl, uint8_t val){
+void raster_polyline(uint8_t *img, const Polyline *pl, uint8_t val){
     if (!pl || pl->len < 2) return;
 
-    for (size_t i = 1; i < pl->len; ++i){ // check bounds
+    for (size_t i = 1; i < pl->len; ++i){ // check bounds here
         int x0 = (int)roundf(pl->pts[i-1].x);
         int y0 = (int)roundf(pl->pts[i-1].y);
         int x1 = (int)roundf(pl->pts[i].x);
