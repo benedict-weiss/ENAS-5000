@@ -48,6 +48,7 @@ void polyline_free(Polyline *pl){
 
 int polyline_reserve(Polyline *pl, size_t desired_cap){
     if(desired_cap <= pl->cap) return 1;
+
     size_t new_cap;
     if (pl->cap != 0){
         new_cap = pl->cap;
@@ -55,16 +56,15 @@ int polyline_reserve(Polyline *pl, size_t desired_cap){
         new_cap = START_CAP;
     }
 
+    size_t max_cap = SIZE_MAX / sizeof(Vec2);
+    if (desired_cap > max_cap) return 0;
+
     while (new_cap < desired_cap){
-        if (new_cap > SIZE_MAX / 2){ // prevents overflow of size_t
+        if (new_cap > max_cap / 2){ // prevents overflow of size_t
             new_cap = desired_cap;
             break;
         }
         new_cap *= 2;
-    }
-
-    if (new_cap > SIZE_MAX / sizeof(Vec2)){
-        return 0;
     }
     
     void *p = realloc(pl->pts, new_cap * sizeof(Vec2));

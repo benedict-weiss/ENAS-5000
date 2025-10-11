@@ -12,7 +12,7 @@ void draw_input_init(DrawInput *di){
 
     di->is_drawing = 0;
     di->min_dist = MIN_DIST;
-    di->max_pts = MAX_PTS;
+    di->max_pts = MAX_PTS; // NB set to zero for unlimited
 }
 
 void draw_input_free(DrawInput *di){
@@ -28,7 +28,10 @@ void draw_input_clear(DrawInput *di){
 
 // what if this fails? consider backup options
 void try_add_point(DrawInput *di, float x, float y){
-    if(di->max_pts && di->line.len >= di->max_pts) return; // too many points
+    if(di->max_pts && di->line.len >= di->max_pts){ // too many points
+        di->is_drawing = 0;
+        return;
+    }
     Vec2 p = {x, y};
     if (di->line.len > 0){
         Vec2 last = di->line.pts[di->line.len - 1];
@@ -36,6 +39,7 @@ void try_add_point(DrawInput *di, float x, float y){
         if (add_dist < di->min_dist) return;
     }
     if(!polyline_push(&di->line, p)){
+        polyline_clear(&di->line); // invalidates line if fails halfway through
         di->is_drawing = 0;
     }
     

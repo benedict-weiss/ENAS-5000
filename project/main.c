@@ -85,8 +85,9 @@ int main(){
         SDL_SetRenderDrawColor(ren_draw, 0, 0, 0, 255); // line colour - black
         const Polyline *pl = &di.line;
 
-        if (pl->len > 1 && pl->pts) { // should always be true
-            for (size_t i = 1; i < pl->len; ++i) { // check loop conditions here
+        size_t n = pl->len;
+        if (n> 1 && pl->pts) { // should always be true
+            for (size_t i = 1; i < n; ++i) { // check loop conditions here
                 SDL_RenderDrawLine(ren_draw,
                     (int)pl->pts[i-1].x, (int)pl->pts[i-1].y,
                     (int)pl->pts[i].x, (int)pl->pts[i].y);
@@ -98,7 +99,7 @@ int main(){
         raster_clear(canvas);
         raster_polyline(canvas, &di.line, 255); // white line colour
 
-        // fourier_spectrum(canvas, RASTER_SIZE, RASTER_SIZE);
+        fourier_spectrum(canvas, RASTER_SIZE, RASTER_SIZE);
 
         void *pixels = NULL; // raw ptr
         uint8_t *dest = NULL; // writing into here
