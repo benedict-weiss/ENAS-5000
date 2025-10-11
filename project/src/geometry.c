@@ -1,5 +1,6 @@
 #include "geometry.h"
 
+#include <stdlib.h> // necessary?
 #include <math.h>
 
 #define START_CAP 128
@@ -51,7 +52,7 @@ int polyline_reserve(Polyline *pl, size_t desired_cap){
     if (pl->cap != 0){
         new_cap = pl->cap;
     } else {
-        pl->cap = START_CAP;
+        new_cap = START_CAP;
     }
 
     while (new_cap < desired_cap){

@@ -1,0 +1,39 @@
+# temporarily generated makefile for testing
+
+# Builds and runs the test_input program using SDL2
+
+# Compiler and flags
+CC = gcc
+CFLAGS = -std=c11 -g -Wall -Werror
+INCLUDE = ./include
+SRC = ./src/geometry.c ./src/draw_input.c
+
+# SDL2 configuration (uses sdl2-config to find includes and libs)
+SDL_CFLAGS  = $(shell sdl2-config --cflags)
+SDL_LDFLAGS = $(shell sdl2-config --libs)
+
+# Output directory
+BIN = ./bin
+
+# Default target: build and run the SDL input test
+all: $(BIN)/test_input
+	@echo "Running test_input..."
+	@$(BIN)/test_input
+
+# --- Build rules ---
+
+# Ensure bin directory exists
+$(BIN):
+	mkdir -p $(BIN)
+
+# Build the test_input executable
+$(BIN)/test_input: $(SRC) ./tests/test_input.c | $(BIN)
+	$(CC) $(CFLAGS) $(SDL_CFLAGS) -I$(INCLUDE) $^ -o $@ $(SDL_LDFLAGS)
+
+# --- Utility targets ---
+
+run:
+	@$(BIN)/test_input
+
+clean:
+	rm -rf $(BIN)/*

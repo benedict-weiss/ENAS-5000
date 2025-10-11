@@ -1,16 +1,18 @@
 #include "draw_input.h"
 
 #include <SDL2/SDL.h>
+#include <stdlib.h> // necessary?
 #include <math.h>
 
 #define MIN_DIST 1.0f
-#define MAX_PTS 10
+#define MAX_PTS 10000
 
 void draw_input_init(DrawInput *di){
-    polyline_int(&di->line);
+    polyline_init(&di->line);
+
     di->is_drawing = 0;
     di->min_dist = MIN_DIST;
-    di->max_pts = 0; // should set to MAX_PTS at initialisation?
+    di->max_pts = MAX_PTS;
 }
 
 void draw_input_free(DrawInput *di){
@@ -31,9 +33,12 @@ void try_add_point(DrawInput *di, float x, float y){
     if (di->line.len > 0){
         Vec2 last = di->line.pts[di->line.len - 1];
         float add_dist = vec2_dist(last, p);
-        if (add_dist < MIN_DIST) return;
+        if (add_dist < di->min_dist) return;
     }
-    polyline_push(&di->line, p);
+    if(!polyline_push(&di->line, p)){
+        di->is_drawing = 0;
+    }
+    
 }
 
 void draw_input_handling(DrawInput *di, const void *event_ptr){
@@ -51,7 +56,8 @@ void draw_input_handling(DrawInput *di, const void *event_ptr){
 
         case SDL_MOUSEMOTION:
             if(di->is_drawing){
-                try_add_point(di, (float)e->button.x, (float)e->button.y);
+                try_add_point(di, (float)e->motion.x, (float)e->motion.y);
+                // is motion or button better here? relative
             }
             break;
 
