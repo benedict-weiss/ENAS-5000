@@ -1,14 +1,17 @@
 #include <SDL2/SDL.h>
 #include "geometry.h"
 #include "draw_input.h"
+#include "raster.h"
 
 int main(){
 
     // not checking SDL objects for failure - but working fine so far lol
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* win = SDL_CreateWindow("test_input",
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512, 0);
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, RASTER_SIZE, RASTER_SIZE, 0);
     SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+
+    //uint8_t canvas[RASTER_SIZE * RASTER_SIZE];
 
     DrawInput di;
     draw_input_init(&di);

@@ -29,7 +29,7 @@ void raster_clear(uint8_t *img){
 void raster_polyline(uint8_t *img, Polyline *pl, uint8_t val){
     if (!pl || pl->len < 2) return;
 
-    for (size_t i = 0; i < pl->len; ++i){ // check bounds
+    for (size_t i = 1; i < pl->len; ++i){ // check bounds
         int x0 = (int)roundf(pl->pts[i-1].x);
         int y0 = (int)roundf(pl->pts[i-1].y);
         int x1 = (int)roundf(pl->pts[i].x);
