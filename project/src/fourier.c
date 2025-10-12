@@ -2,7 +2,7 @@
 
 
 
-#define N_TERMS 5
+#define N_TERMS 10
 
 // returns 0 if multiplication causes size_t overflow
 // otherwise returns 1 if you can safely multiply
