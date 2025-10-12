@@ -36,3 +36,4 @@ run:
 
 clean:
 	rm -rf $(BIN)/*
+	rm .DS_Store
