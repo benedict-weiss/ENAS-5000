@@ -5,8 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
-
-// NB going to start with FFT but may implement naive dft2d etc later
+#include <float.h>
 
 int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms);
 
