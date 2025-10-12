@@ -7,8 +7,10 @@
 #include <math.h>
 #include <float.h>
 
+#include "geometry.h"
+
 int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms);
 
-int fourier_2d(uint8_t *canvas, size_t width, size_t height, int num_terms);
+int fourier_2d_from_pl(uint8_t *canvas, size_t width, size_t height, int num_terms, const Polyline *pl);
 
 #endif

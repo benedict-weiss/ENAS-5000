@@ -143,7 +143,7 @@ int main(){
             if (dimension == 1) {
                 fourier_1d(canvas, RASTER_SIZE, RASTER_SIZE, num_terms);
             } else if (dimension == 2){
-                fourier_2d(canvas, RASTER_SIZE, RASTER_SIZE, num_terms);
+                fourier_2d_from_pl(canvas, RASTER_SIZE, RASTER_SIZE, num_terms, pl);
             }
 
             void *pixels = NULL; // raw ptr

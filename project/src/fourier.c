@@ -199,6 +199,7 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
     return 1;
 }
 
-int fourier_2d(uint8_t *canvas, size_t width, size_t height, int num_terms) {
+//better to do it from polyline in this case I think
+int fourier_2d_from_pl(uint8_t *canvas, size_t width, size_t height, int num_terms, const Polyline *pl) {
     return 0;
 }
