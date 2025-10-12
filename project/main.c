@@ -86,7 +86,7 @@ int main(){
         const Polyline *pl = &di.line;
 
         size_t n = pl->len;
-        if (n> 1 && pl->pts) { // should always be true
+        if (n >= 2 && pl->pts) { // should always be true
             for (size_t i = 1; i < n; ++i) { // check loop conditions here
                 SDL_RenderDrawLine(ren_draw,
                     (int)pl->pts[i-1].x, (int)pl->pts[i-1].y,
@@ -96,19 +96,18 @@ int main(){
         }
         SDL_RenderPresent(ren_draw);
 
-        if (!di.is_drawing){
+        if (!di.is_drawing && pl->pts && pl->len >= 2){
 
             raster_clear(canvas);
             raster_polyline(canvas, &di.line, 255); // white line colour
 
-            fourier_spectrum(canvas, RASTER_SIZE, RASTER_SIZE);
+            fourier_1d(canvas, RASTER_SIZE, RASTER_SIZE);
 
             void *pixels = NULL; // raw ptr
-            uint8_t *dest = NULL; // writing into here
             int pitch = 0;
 
             if (SDL_LockTexture(tex_raster, NULL, &pixels, &pitch)==0){;
-                dest = (uint8_t *)pixels;
+                uint8_t *dest = (uint8_t *)pixels;
                 for (int y = 0; y < RASTER_SIZE; y++){
                     for (int x = 0; x < RASTER_SIZE; x++){
                         uint8_t v = canvas[y * RASTER_SIZE + x];

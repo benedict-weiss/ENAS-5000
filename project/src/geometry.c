@@ -47,7 +47,7 @@ void polyline_free(Polyline *pl){
     pl->cap = 0;
 }
 
-// CHECK RESIZE AND RESERVE
+// do i need a resize function
 
 int polyline_reserve(Polyline *pl, size_t desired_cap){
     size_t hard_cap = MAX_PTS; // necessary?

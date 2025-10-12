@@ -30,6 +30,7 @@ void draw_input_clear(DrawInput *di){
 
 // what if this fails? consider backup options
 void try_add_point(DrawInput *di, float x, float y){
+    if(!di) return;
     if(di->max_pts && di->line.len >= di->max_pts){ // too many points
         fprintf(stderr, "[warning] polyline point cap reached (%zu)\n", di->line.len);
         di->is_drawing = 0;
