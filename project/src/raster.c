@@ -23,11 +23,11 @@ void raster_line(uint8_t *img, int x0, int y0, int x1, int y1, uint8_t val){
 }
 
 void raster_clear(uint8_t *img){
-    memset(img, 0, RASTER_SIZE * RASTER_SIZE);
+    memset(img, 0, RASTER_SIZE * RASTER_SIZE * sizeof(uint8_t)); // is this good?
 }
 
 void raster_polyline(uint8_t *img, const Polyline *pl, uint8_t val){
-    if (!pl || pl->len < 2) return;
+    if (!pl || !pl->pts || pl->len < 2) return;
 
     for (size_t i = 1; i < pl->len; ++i){ // check bounds here
         int x0 = (int)roundf(pl->pts[i-1].x);

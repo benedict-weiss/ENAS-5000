@@ -4,9 +4,6 @@
 #include <stdlib.h> // necessary?
 #include <math.h>
 
-#define MIN_DIST 1.0f
-#define MAX_PTS 10000
-
 void draw_input_init(DrawInput *di){
     polyline_init(&di->line);
 

@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "draw_input.h" // this might not be great
 
 #include <stdlib.h> // necessary?
 #include <math.h>
@@ -47,6 +48,8 @@ void polyline_free(Polyline *pl){
 }
 
 int polyline_reserve(Polyline *pl, size_t desired_cap){
+    if(desired_cap > MAX_PTS) return 0;
+
     if(desired_cap <= pl->cap) return 1;
 
     size_t new_cap;
