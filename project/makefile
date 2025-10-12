@@ -32,7 +32,6 @@ $(BIN)/main: $(SRC) ./main.c | $(BIN)
 # --- Utility targets ---
 
 run:
-	@echo "Running main..."
 	@$(BIN)/main
 
 clean:

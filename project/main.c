@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <stdio.h>
 #include "geometry.h"
 #include "draw_input.h"
 #include "raster.h"
@@ -8,6 +9,41 @@
 #define PIXEL_GAP 20
 
 int main(){
+
+    printf("\nWelcome to my foray into Fourier Transforms!\n");
+    printf("To exit, press Ctrl+C on the command line, or close the graphical interface.\n\n");
+
+    printf("First, would you like calculations in 1D or 2D? (1/2)\n");
+    int dimension;
+    while (1) {
+        if (scanf("%d", &dimension) != 1) {
+            printf("Invalid input. Please type 1 or 2.\n");
+            while (getchar() != '\n'); // clears input buffer
+            continue;
+        }
+        if (dimension == 1 || dimension == 2) {
+            break;
+        } else {
+            printf("Please type 1 or 2.\n");
+        }
+    }
+    
+    printf("Now, how many terms would you like to approximate to? (from 1 to 20)\n");
+    int num_terms;
+    while(1){
+        if (scanf("%d", &num_terms) != 1) {
+            printf("Invalid input. Please type a number from 1 to 20.\n");
+            while (getchar() != '\n'); // clears input buffer
+            continue;
+        }
+        if (num_terms >= 1 && num_terms <= 20) {
+            break;
+        } else {
+            printf("Please type a number from 1 to 20.\n");
+        }
+    }
+
+
 
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl"); // best for my machine (Intel Mac)
 
@@ -104,7 +140,11 @@ int main(){
             raster_clear(canvas);
             raster_polyline(canvas, &di.line, 255); // white line colour
 
-            fourier_1d(canvas, RASTER_SIZE, RASTER_SIZE);
+            if (dimension == 1) {
+                fourier_1d(canvas, RASTER_SIZE, RASTER_SIZE, num_terms);
+            } else if (dimension == 2){
+                fourier_2d(canvas, RASTER_SIZE, RASTER_SIZE, num_terms);
+            }
 
             void *pixels = NULL; // raw ptr
             int pitch = 0;

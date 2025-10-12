@@ -1,9 +1,5 @@
 #include "fourier.h"
 
-
-
-#define N_TERMS 10
-
 // returns 0 if multiplication causes size_t overflow
 // otherwise returns 1 if you can safely multiply
 // result in output parameter *out
@@ -134,7 +130,7 @@ void reconstruct_series(size_t N, int K, double a0, double *a, double *b, float 
 }
 
 
-int fourier_1d(uint8_t *canvas, size_t width, size_t height){
+int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
     if (!canvas || width == 0 || height == 0) return 0;
 
     // should be RASTER_SIZE ^2
@@ -155,7 +151,7 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height){
 
     extract_signal(canvas, width, height, input);
 
-    int K = N_TERMS;
+    int K = num_terms;
     if ((size_t)K > width / 2) { // is this necessary?
         K = (int)width / 2; 
     }
@@ -203,3 +199,6 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height){
     return 1;
 }
 
+int fourier_2d(uint8_t *canvas, size_t width, size_t height, int num_terms) {
+    return 0;
+}
