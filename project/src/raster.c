@@ -6,6 +6,7 @@
 
 
 // basic implementation of Bresenham line algorithm found online (https://gist.github.com/bert/1085538)
+// rasterises line and sets pixels to val
 void raster_line(uint8_t *img, int x0, int y0, int x1, int y1, uint8_t val){
     int dx =  abs (x1 - x0), sx = x0 < x1 ? 1 : -1;
     int dy = -abs (y1 - y0), sy = y0 < y1 ? 1 : -1; 
@@ -23,7 +24,7 @@ void raster_line(uint8_t *img, int x0, int y0, int x1, int y1, uint8_t val){
 }
 
 void raster_clear(uint8_t *img){
-    memset(img, 0, RASTER_SIZE * RASTER_SIZE * sizeof(uint8_t)); // is this good?
+    memset(img, 0, RASTER_SIZE * RASTER_SIZE * sizeof(uint8_t)); // NB uint8_t should be a byte
 }
 
 void raster_polyline(uint8_t *img, const Polyline *pl, uint8_t val){

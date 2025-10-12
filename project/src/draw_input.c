@@ -21,7 +21,9 @@ void draw_input_free(DrawInput *di){
 }
 
 void draw_input_clear(DrawInput *di){
-    polyline_clear(&di->line);
+    //polyline_clear(&di->line);
+    polyline_free(&di->line);
+    polyline_init(&di->line);
     di->is_drawing = 0;
 }
 
@@ -54,7 +56,7 @@ void draw_input_handling(DrawInput *di, const SDL_Event *e){
             if(e->button.button == SDL_BUTTON_LEFT){
                 draw_input_clear(di); // only one line at a time
                 di->is_drawing = 1;
-                polyline_reserve(&di->line, 500000); // precautionary
+                polyline_reserve(&di->line, 50000); // precautionary
                 try_add_point(di, (float)e->button.x, (float)e->button.y);
             }
             break;
