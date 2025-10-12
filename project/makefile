@@ -26,7 +26,7 @@ $(BIN):
 
 # Build the test_input executable
 $(BIN)/main: $(SRC) ./main.c | $(BIN)
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) -I$(INCLUDE) $^ -o $@ $(SDL_LDFLAGS)
+	$(CC) $(CFLAGS) $(SDL_CFLAGS) -I$(INCLUDE) $^ -o $@ $(SDL_LDFLAGS) -lm
 
 # --- Utility targets ---
 
