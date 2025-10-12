@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <stdlib.h> // necessary?
+#include <stdio.h>
 #include <math.h>
 
 void draw_input_init(DrawInput *di){
@@ -10,6 +11,8 @@ void draw_input_init(DrawInput *di){
     di->is_drawing = 0;
     di->min_dist = MIN_DIST;
     di->max_pts = MAX_PTS; // NB set to zero for unlimited
+
+
 }
 
 void draw_input_free(DrawInput *di){
@@ -51,6 +54,7 @@ void draw_input_handling(DrawInput *di, const SDL_Event *e){
             if(e->button.button == SDL_BUTTON_LEFT){
                 draw_input_clear(di); // only one line at a time
                 di->is_drawing = 1;
+                polyline_reserve(&di->line, 500000); // precautionary
                 try_add_point(di, (float)e->button.x, (float)e->button.y);
             }
             break;

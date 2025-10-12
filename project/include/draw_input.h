@@ -5,7 +5,7 @@
 #include "geometry.h"
 
 #define MIN_DIST 1.5f
-#define MAX_PTS 50000
+#define MAX_PTS 1000000
 
 // think about this - careful with types
 typedef struct {
