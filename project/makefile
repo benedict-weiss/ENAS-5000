@@ -11,6 +11,7 @@ SRC = ./src/geometry.c ./src/draw_input.c ./src/raster.c ./src/fourier.c
 # SDL2 configuration (uses sdl2-config to find includes and libs)
 SDL_CFLAGS  = $(shell sdl2-config --cflags)
 SDL_LDFLAGS = $(shell sdl2-config --libs)
+SDL_LIBDIR  = $(shell sdl2-config --libdir)
 
 # Output directory
 BIN = ./bin

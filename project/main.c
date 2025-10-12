@@ -9,15 +9,18 @@
 
 int main(){
 
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl"); // best for my machine (Intel Mac)
+
     // not checking SDL objects for failure - but working fine so far lol
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* win_draw = SDL_CreateWindow("Draw Input",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, RASTER_SIZE, RASTER_SIZE, 0);
-    SDL_Renderer* ren_draw = SDL_CreateRenderer(win_draw, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* ren_draw = SDL_CreateRenderer(win_draw, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     SDL_Window* win_raster = SDL_CreateWindow("Raster Output",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, RASTER_SIZE, RASTER_SIZE, 0);
-    SDL_Renderer* ren_raster = SDL_CreateRenderer(win_raster, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* ren_raster = SDL_CreateRenderer(win_raster, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    
 
     // window positioning
     int win_x, win_y;
@@ -108,19 +111,16 @@ int main(){
 
             if (SDL_LockTexture(tex_raster, NULL, &pixels, &pitch)==0){;
                 uint8_t *dest = (uint8_t *)pixels;
-                for (int y = 0; y < RASTER_SIZE; y++){
-                    for (int x = 0; x < RASTER_SIZE; x++){
+                for (int y = 0; y < RASTER_SIZE; ++y){
+                    //uint8_t *row = dest * y + pitch;
+                    for (int x = 0; x < RASTER_SIZE; ++x){
+
                         uint8_t v = canvas[y * RASTER_SIZE + x];
 
                         uint8_t r = 0, g = 0, b = 0;
 
-                        if (v == 1) {
-                            r = g = b = 255;
-                        } else if (v == 2) {
-                            r = 255;
-                            g = 0;
-                            b = 0;
-                        }
+                        if (v == 1) { r = g = b = 255; }
+                        else if (v == 2) { r = 255; }
 
                         dest[y * pitch + x * 3 + 0] = r;
                         dest[y * pitch + x * 3 + 1] = g;
@@ -136,6 +136,7 @@ int main(){
             SDL_RenderCopy(ren_raster, tex_raster, NULL, NULL);
             SDL_RenderPresent(ren_raster);
         }
+        SDL_Delay(16); // precaution at 60fps (definitely sufficient)
         
 
     }
