@@ -2,17 +2,28 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-// Hard-code number of Fourier series terms for now
 #define N_TERMS 5
 
-// Helper: find a 1D signal f[x] from a thin rasterized curve by taking the mean y of lit pixels per column.
+// Safe multiply: returns 0 on overflow, 1 on success (result in *out)
+static int safe_mul_size(size_t a, size_t b, size_t *out){
+    if (a == 0 || b == 0) { *out = 0; return 1; }
+    if (a > SIZE_MAX / b) return 0;
+    *out = a * b;
+    return 1;
+}
+
 static void extract_signal_from_canvas(const uint8_t *canvas, size_t width, size_t height, float *f_out){
-    for (size_t x = 0; x < width; ++x) f_out[x] = NAN;
+    // Use a sentinel rather than NaN to avoid UB under fast-math
+    const float SENT = -1.0f;
+
+    for (size_t x = 0; x < width; ++x) f_out[x] = SENT;
 
     for (size_t x = 0; x < width; ++x){
         int count = 0;
@@ -24,17 +35,17 @@ static void extract_signal_from_canvas(const uint8_t *canvas, size_t width, size
     }
 
     // Fill gaps (if a column had no lit pixels)
-    float last = NAN;
+    float last = SENT;
     for (size_t x = 0; x < width; ++x){            // forward fill
-        if (isnan(f_out[x])) f_out[x] = last; else last = f_out[x];
+        if (f_out[x] == SENT) f_out[x] = last; else last = f_out[x];
     }
-    float next = NAN;
+    float next = SENT;
     for (size_t xi = 0; xi < width; ++xi){         // backward fill
         size_t x = width-1 - xi;
-        if (isnan(f_out[x])) f_out[x] = next; else next = f_out[x];
+        if (f_out[x] == SENT) f_out[x] = next; else next = f_out[x];
     }
     for (size_t x = 0; x < width; ++x){            // fallback (empty canvas)
-        if (isnan(f_out[x])) f_out[x] = (float)(height/2.0);
+        if (f_out[x] == SENT) f_out[x] = (float)(height/2.0);
     }
 }
 
@@ -67,37 +78,58 @@ static void reconstruct_signal(size_t N, int K, double a0,
             double t = (2.0*M_PI*(double)k*(double)n)/(double)N;
             y += a[k-1]*cos(t) + b[k-1]*sin(t);
         }
+        // clamp to a safe float (defensive)
+        if (!isfinite(y)) y = 0.0;
         out[n] = (float)y;
     }
 }
 
 int fourier_spectrum(uint8_t *canvas, size_t width, size_t height){
-    if (!canvas || !width || !height) return 0;
+    if (!canvas || width == 0 || height == 0) return 0;
 
-    float *f = (float*)malloc(width*sizeof(float));
-    float *fhat = (float*)malloc(width*sizeof(float));
+    // Check for overflow in buffer size computations
+    size_t nbytes = 0;
+    if (!safe_mul_size(width, height, &nbytes)) return 0; // overflow
+    if (!safe_mul_size(nbytes, sizeof(uint8_t), &nbytes)) return 0; // theoretical
+
+    // Allocate working buffers with overflow checks
+    size_t wbytes = 0;
+    if (!safe_mul_size(width, sizeof(float), &wbytes)) return 0;
+    float *f    = (float*)malloc(wbytes);
+    float *fhat = (float*)malloc(wbytes);
     if (!f || !fhat){ free(f); free(fhat); return 0; }
 
     // 1) Extract signal
     extract_signal_from_canvas(canvas, width, height, f);
 
-    // 2) Fourier up to N_TERMS
-    double a0;
-    double a[N_TERMS], b[N_TERMS];
-    compute_fourier_coeffs(f, width, N_TERMS, &a0, a, b);
+    // 2) Fourier up to N_TERMS (clamp to <= width/2 and >= 1)
+    int K = N_TERMS;
+    if ((size_t)K > width/2) K = (int)(width/2);
+    if (K < 1) K = 1;
 
-    // 3) Reconstruct with exactly N_TERMS
-    reconstruct_signal(width, N_TERMS, a0, a, b, fhat);
+    double a0 = 0.0;
+    double a[N_TERMS] = {0}, b[N_TERMS] = {0};
+    compute_fourier_coeffs(f, width, K, &a0, a, b);
+
+    // 3) Reconstruct
+    reconstruct_signal(width, K, a0, a, b, fhat);
 
     // 4) Draw the approximation back into canvas
-    memset(canvas, 0, width*height*sizeof(uint8_t));
+    memset(canvas, 0, nbytes);
     for (size_t x = 0; x < width; ++x){
-        int y = (int)llround((long double)fhat[x]);
-        if (y >= 0 && (size_t)y < height) canvas[y*width + x] = 255;
+        // round safely and bound-check in size_t domain
+        long y_l = lroundf(fhat[x]);
+        if (y_l < 0) continue;
+        size_t y = (size_t)y_l;
+        if (y >= height) continue;
+
+        size_t idx = 0;
+        // y*width + x can't overflow if y<height and x<width and we already checked width*height
+        idx = y * width + x;
+        canvas[idx] = 255;
     }
 
     free(f);
     free(fhat);
     return 1;
 }
-
