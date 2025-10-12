@@ -87,11 +87,34 @@ void extract_signal(const uint8_t *canvas, size_t width, size_t height, float *s
 // f is input signal of length N (from extract_signal above)
 // N is number of samples
 // K is number of harmonics (change to be able to vary this later)
-// a0 is mean term output
+// a0_out is mean term output
 // a and b are output arrays of length K with cosine and sine coeffs respectively (have to allocate in driver function)
-void dft_real_coeffs(const float *f, size_t N, int K, double *a0, double *a, double *b){
-    
-}; // careful with types
+void dft_real_coeffs(const float *f, size_t N, int K, double *a0_out, double *a, double *b){  // careful with types
+
+    double a0 = 0.0;
+    for (size_t n = 0; n < N; ++n) {
+        a0 += (double)f[n];
+    }
+    a0 /= (double)N;
+    *a0_out = a0;
+
+    const double scale = 2.0 / (double)N;
+
+    for (int k = 1; k <= K; ++k) {
+        double ak = 0.0;
+        double bk = 0.0;
+        const double twopikoverN = scale * M_PI * (double)k;
+        for (size_t n = 0; n < N; ++n) {
+            double arg = twopikoverN * (double)n;
+            double fn = (double)f[n];
+            ak += fn * cos(arg);
+            bk += fn * sin(arg);
+        }
+        a[k-1] = scale * ak;
+        b[k-1] = scale * bk;
+    }
+
+};
 
 // reconstruct the signal from truncated Fourier series (ie find approximation)
 // N, K, a0, a, b as above
