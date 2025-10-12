@@ -13,7 +13,7 @@ int safe_multiply(size_t a, size_t b, size_t *out) {
         *out = 0;
         return 1;
     }
-    if (a * b > SIZE_MAX) {
+    if (a > SIZE_MAX / b) {
         return 0;
     } else {
         *out = a * b;
@@ -122,7 +122,7 @@ void dft_real_coeffs(const float *f, size_t N, int K, double *a0_out, double *a,
 void reconstruct_series(size_t N, int K, double a0, double *a, double *b, float *out) {
     for (size_t n = 0; n < N; ++n) {
         double y = a0;
-        for (int k = 0; k < K; ++k) {
+        for (int k = 1; k < K; ++k) {
             double arg = 2.0 * M_PI * (double)k * (double)n / (double)N;
             y += a[k-1] * cos(arg) + b[k-1] * sin(arg);
         }
@@ -182,7 +182,7 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height){
     // populate canvas
     for (size_t x = 0; x < width; ++x) {
         int y = (int)lroundf(output[x]);
-        if (y < x || (size_t)y >= height) continue;
+        if (y < 0 || (size_t)y >= height) continue;
 
         canvas[(size_t)y * width + x] = 255;
     }
