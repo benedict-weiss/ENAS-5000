@@ -1,6 +1,6 @@
 #include "fourier.h"
 
-#include <math.h>
+
 
 #define N_TERMS 5
 
@@ -179,12 +179,20 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height){
 
     memset(canvas, 0, total_pixels);
 
+    // add original line
+    for (size_t x = 0; x < width; ++x){
+        int y = (int)lroundf(input[x]);
+        if (y < 0 || (size_t)y >= height) continue;
+
+        canvas[(size_t)y * width + x] = 2;
+    }
+
     // populate canvas
     for (size_t x = 0; x < width; ++x) {
         int y = (int)lroundf(output[x]);
         if (y < 0 || (size_t)y >= height) continue;
 
-        canvas[(size_t)y * width + x] = 255;
+        canvas[(size_t)y * width + x] = 1;
     }
 
     free(a);

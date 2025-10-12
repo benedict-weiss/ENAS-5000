@@ -111,9 +111,20 @@ int main(){
                 for (int y = 0; y < RASTER_SIZE; y++){
                     for (int x = 0; x < RASTER_SIZE; x++){
                         uint8_t v = canvas[y * RASTER_SIZE + x];
-                        dest[y * pitch + x * 3 + 0] = v;
-                        dest[y * pitch + x * 3 + 1] = v;
-                        dest[y * pitch + x * 3 + 2] = v;
+
+                        uint8_t r = 0, g = 0, b = 0;
+
+                        if (v == 1) {
+                            r = g = b = 255;
+                        } else if (v == 2) {
+                            r = 255;
+                            g = 0;
+                            b = 0;
+                        }
+
+                        dest[y * pitch + x * 3 + 0] = r;
+                        dest[y * pitch + x * 3 + 1] = g;
+                        dest[y * pitch + x * 3 + 2] = b;
                     }
                 }
                 SDL_UnlockTexture(tex_raster);
