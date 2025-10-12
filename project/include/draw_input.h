@@ -4,8 +4,8 @@
 #include <SDL2/SDL.h>
 #include "geometry.h"
 
-#define MIN_DIST 1.0f
-#define MAX_PTS 10000
+#define MIN_DIST 1.5f
+#define MAX_PTS 50000
 
 // think about this - careful with types
 typedef struct {

@@ -96,35 +96,37 @@ int main(){
         }
         SDL_RenderPresent(ren_draw);
 
-        raster_clear(canvas);
-        raster_polyline(canvas, &di.line, 255); // white line colour
+        if (!di.is_drawing){
 
-        fourier_spectrum(canvas, RASTER_SIZE, RASTER_SIZE);
+            raster_clear(canvas);
+            raster_polyline(canvas, &di.line, 255); // white line colour
 
-        void *pixels = NULL; // raw ptr
-        uint8_t *dest = NULL; // writing into here
-        int pitch = 0;
+            fourier_spectrum(canvas, RASTER_SIZE, RASTER_SIZE);
 
-        if (SDL_LockTexture(tex_raster, NULL, &pixels, &pitch)==0){;
-            dest = (uint8_t *)pixels;
-            for (int y = 0; y < RASTER_SIZE; y++){
-                for (int x = 0; x < RASTER_SIZE; x++){
-                    uint8_t v = canvas[y * RASTER_SIZE + x];
-                    dest[y * pitch + x * 3 + 0] = v;
-                    dest[y * pitch + x * 3 + 1] = v;
-                    dest[y * pitch + x * 3 + 2] = v;
+            void *pixels = NULL; // raw ptr
+            uint8_t *dest = NULL; // writing into here
+            int pitch = 0;
+
+            if (SDL_LockTexture(tex_raster, NULL, &pixels, &pitch)==0){;
+                dest = (uint8_t *)pixels;
+                for (int y = 0; y < RASTER_SIZE; y++){
+                    for (int x = 0; x < RASTER_SIZE; x++){
+                        uint8_t v = canvas[y * RASTER_SIZE + x];
+                        dest[y * pitch + x * 3 + 0] = v;
+                        dest[y * pitch + x * 3 + 1] = v;
+                        dest[y * pitch + x * 3 + 2] = v;
+                    }
                 }
+                SDL_UnlockTexture(tex_raster);
             }
-            SDL_UnlockTexture(tex_raster);
-        }
 
 
-        SDL_SetRenderDrawColor(ren_raster, 0, 0, 0, 255); // background colour - black
-        SDL_RenderClear(ren_raster);
-        SDL_RenderCopy(ren_raster, tex_raster, NULL, NULL);
-        if(di.is_drawing == 0){
+            SDL_SetRenderDrawColor(ren_raster, 0, 0, 0, 255); // background colour - black
+            SDL_RenderClear(ren_raster);
+            SDL_RenderCopy(ren_raster, tex_raster, NULL, NULL);
             SDL_RenderPresent(ren_raster);
         }
+        
 
     }
 

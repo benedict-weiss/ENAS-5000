@@ -48,7 +48,10 @@ void polyline_free(Polyline *pl){
 }
 
 int polyline_reserve(Polyline *pl, size_t desired_cap){
-    if(desired_cap > MAX_PTS) return 0;
+    size_t hard_cap = MAX_PTS; // necessary?
+    if(hard_cap && desired_cap > hard_cap) {
+        desired_cap = hard_cap;
+    }
 
     if(desired_cap <= pl->cap) return 1;
 
