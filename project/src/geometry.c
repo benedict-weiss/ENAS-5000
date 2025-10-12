@@ -53,7 +53,10 @@ int polyline_reserve(Polyline *pl, size_t desired_cap){
         desired_cap = hard_cap;
     }
 
-    if(desired_cap <= pl->cap) return 1;
+    if(desired_cap <= pl->cap) {
+        if (hard_cap && pl->cap >= hard_cap && pl->len >= pl->cap) return 0;
+        return 1;
+    }
 
     size_t new_cap;
     if (pl->cap != 0){
@@ -85,7 +88,13 @@ int polyline_reserve(Polyline *pl, size_t desired_cap){
 }
 
 int polyline_push(Polyline *pl, Vec2 p){
-    if (pl->len == pl->cap && !polyline_reserve(pl, pl->len + 1)) return 0;
+    if (pl->len == pl->cap){
+        if (!polyline_reserve(pl, pl->len + 1)){
+            return 0;
+        }
+        if (pl->len == pl->cap) return 0; // overkill?
+    }
+
     pl->pts[pl->len++] = p;
     return 1;
 }
