@@ -53,7 +53,10 @@ int main(){
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, RASTER_SIZE, RASTER_SIZE, 0);
     SDL_Renderer* ren_draw = SDL_CreateRenderer(win_draw, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    SDL_Window* win_raster = SDL_CreateWindow("Raster Output",
+    char label[64]; // large enough
+    snprintf(label, sizeof(label), "Fourier Output (%dD): %d terms", dimension, num_terms);
+
+    SDL_Window* win_raster = SDL_CreateWindow(label,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, RASTER_SIZE, RASTER_SIZE, 0);
     SDL_Renderer* ren_raster = SDL_CreateRenderer(win_raster, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     

@@ -32,7 +32,7 @@ void draw_input_clear(DrawInput *di){
 void try_add_point(DrawInput *di, float x, float y){
     if(!di) return;
     if(di->max_pts && di->line.len >= di->max_pts){ // too many points
-        fprintf(stderr, "[warning] polyline point cap reached (%zu)\n", di->line.len);
+        //fprintf(stderr, "[warning] polyline point cap reached (%zu)\n", di->line.len);
         di->is_drawing = 0;
         return;
     }
@@ -43,7 +43,7 @@ void try_add_point(DrawInput *di, float x, float y){
         if (add_dist < di->min_dist) return;
     }
     if(!polyline_push(&di->line, p)){
-        fprintf(stderr, "[error] out of memory adding point at %.1f,%.1f\n", x, y);
+        //fprintf(stderr, "[error] out of memory adding point at %.1f,%.1f\n", x, y);
         di->is_drawing = 0;
     }
     

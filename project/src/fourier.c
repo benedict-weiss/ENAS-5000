@@ -81,6 +81,8 @@ void extract_signal(const uint8_t *canvas, size_t width, size_t height, float *s
 
 };
 
+// WRITE OUT 2 FUNCTIONS BELOW IN LATEX
+
 // compute real Fourier coefficients of a 1D signal
 // f is input signal of length N (from extract_signal above)
 // N is number of samples
@@ -154,7 +156,7 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
     extract_signal(canvas, width, height, input);
 
     int K = num_terms;
-    if ((size_t)K > width / 2) { // is this necessary?
+    if ((size_t)K > width / 2) { // probably overkill - limited by io
         K = (int)width / 2; 
     }
     if (K < 1) K = 1;
@@ -194,13 +196,6 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
             x, (int)lroundf(output[x]),
             1);
     }
-
-    // for (size_t x = 0; x < width; ++x) {
-    //     int y = (int)lroundf(output[x]);
-    //     if (y < 0 || (size_t)y >= height) continue;
-
-    //     canvas[(size_t)y * width + x] = 1;
-    // }
 
     free(a);
     free(b);

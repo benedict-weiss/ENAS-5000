@@ -47,8 +47,11 @@ void polyline_free(Polyline *pl){
     pl->cap = 0;
 }
 
-// do i need a resize function
+// do i need a resize function - think reserve should handle it
 
+
+// NB went overkill with the defensive checks here - thought crashing issue was related to memory allocation or stack overflow
+// ended up being SDL rendering limit not set (i think)
 int polyline_reserve(Polyline *pl, size_t desired_cap){
     size_t hard_cap = MAX_PTS; // necessary?
     if(hard_cap && desired_cap > hard_cap) {
