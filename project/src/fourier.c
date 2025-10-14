@@ -1,6 +1,6 @@
 #include "fourier.h"
 
-#include "raster.h" // maybe not great
+#include "raster.h" // maybe not great from file structure perspective
 
 // returns 0 if multiplication causes size_t overflow
 // otherwise returns 1 if you can safely multiply
@@ -177,7 +177,7 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
 
     reconstruct_series(width, K, a0, a, b, output);
 
-    memset(canvas, 0, total_pixels);
+    raster_clear(canvas);
 
     // this is now a smooth line using bresenham's line algorithm previously implemented
 
@@ -204,6 +204,8 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
 
     return 1;
 }
+
+
 
 //better to do it from polyline in this case I think
 int fourier_2d_from_pl(uint8_t *canvas, size_t width, size_t height, int num_terms, const Polyline *pl) {

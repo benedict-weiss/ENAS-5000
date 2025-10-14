@@ -16,6 +16,8 @@ void raster_clear(uint8_t *img); // used uint8_t here bc it's perfect size for c
 // converts polyline to raster image
 void raster_polyline(uint8_t *img, const Polyline *pl, uint8_t val);
 
+// makes sure raster image is a loop
+void raster_closed_polyline(uint8_t *img, const Polyline *pl, uint8_t val);
 
 
 #endif

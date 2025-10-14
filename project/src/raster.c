@@ -31,14 +31,32 @@ void raster_polyline(uint8_t *img, const Polyline *pl, uint8_t val){
     if (!pl || !pl->pts || pl->len < 2) return;
 
     for (size_t i = 1; i < pl->len; ++i){ // check bounds here
-        int x0 = (int)roundf(pl->pts[i-1].x);
-        int y0 = (int)roundf(pl->pts[i-1].y);
-        int x1 = (int)roundf(pl->pts[i].x);
-        int y1 = (int)roundf(pl->pts[i].y);
+        int x0 = (int)lroundf(pl->pts[i-1].x);
+        int y0 = (int)lroundf(pl->pts[i-1].y);
+        int x1 = (int)lroundf(pl->pts[i].x);
+        int y1 = (int)lroundf(pl->pts[i].y);
         raster_line(img, x0, y0, x1, y1, val);
     }
 }
 
+void raster_closed_polyline(uint8_t *img, const Polyline *pl, uint8_t val) {
+    if (!pl || !pl->pts || pl->len < 2) return;
+
+    // start from last to first
+    size_t n = pl->len;
+    int x_prev = (int)lroundf(pl->pts[n-1].x);
+    int y_prev = (int)lroundf(pl->pts[n-1].y);
+
+    for (size_t i = 0; i < n; ++i) {
+        int x_curr = (int)lroundf(pl->pts[i].x);
+        int y_curr = (int)lroundf(pl->pts[i].y);
+
+        raster_line(img, x_prev, y_prev, x_curr, y_curr, val);
+        
+        x_prev = x_curr;
+        y_prev = y_curr;
+    }
+}
 
 
 
