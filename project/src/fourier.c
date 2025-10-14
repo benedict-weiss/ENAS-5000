@@ -1,5 +1,7 @@
 #include "fourier.h"
 
+#include "raster.h" // maybe not great
+
 // returns 0 if multiplication causes size_t overflow
 // otherwise returns 1 if you can safely multiply
 // result in output parameter *out
@@ -118,7 +120,7 @@ void dft_real_coeffs(const float *f, size_t N, int K, double *a0_out, double *a,
 void reconstruct_series(size_t N, int K, double a0, double *a, double *b, float *out) {
     for (size_t n = 0; n < N; ++n) {
         double y = a0;
-        for (int k = 1; k < K; ++k) {
+        for (int k = 1; k <= K; ++k) {
             double arg = 2.0 * M_PI * (double)k * (double)n / (double)N;
             y += a[k-1] * cos(arg) + b[k-1] * sin(arg);
         }
@@ -175,21 +177,30 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
 
     memset(canvas, 0, total_pixels);
 
-    // add original line
-    for (size_t x = 0; x < width; ++x){
-        int y = (int)lroundf(input[x]);
-        if (y < 0 || (size_t)y >= height) continue;
+    // this is now a smooth line using bresenham's line algorithm previously implemented
 
-        canvas[(size_t)y * width + x] = 2;
+    // add original line
+    for (int x = 1; x < width; ++x) {
+        raster_line(canvas,
+            x - 1, (int)lroundf(input[x-1]),
+            x, (int)lroundf(input[x]),
+            2);
     }
 
     // populate canvas
-    for (size_t x = 0; x < width; ++x) {
-        int y = (int)lroundf(output[x]);
-        if (y < 0 || (size_t)y >= height) continue;
-
-        canvas[(size_t)y * width + x] = 1;
+    for (int x = 1; x < width; ++x) {
+        raster_line(canvas,
+            x - 1, (int)lroundf(output[x-1]),
+            x, (int)lroundf(output[x]),
+            1);
     }
+
+    // for (size_t x = 0; x < width; ++x) {
+    //     int y = (int)lroundf(output[x]);
+    //     if (y < 0 || (size_t)y >= height) continue;
+
+    //     canvas[(size_t)y * width + x] = 1;
+    // }
 
     free(a);
     free(b);
