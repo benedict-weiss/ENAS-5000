@@ -1,4 +1,5 @@
 #include "raster.h"
+#include "fourier.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -39,6 +40,7 @@ void raster_polyline(uint8_t *img, const Polyline *pl, uint8_t val){
     }
 }
 
+// don't end up using this I think
 void raster_closed_polyline(uint8_t *img, const Polyline *pl, uint8_t val) {
     if (!pl || !pl->pts || pl->len < 2) return;
 
@@ -58,8 +60,22 @@ void raster_closed_polyline(uint8_t *img, const Polyline *pl, uint8_t val) {
     }
 }
 
+void raster_closed_line_from_pts(uint8_t *img, const Pt *pts, size_t n, uint8_t val){
+    if(!img || !pts || n < 2) return;
 
+    int x_prev = (int)lroundf(pts[n-1].x);
+    int y_prev = (int)lroundf(pts[n-1].y);
 
+    for (size_t i = 0; i < n; ++i) {
+        int x_curr = (int)lroundf(pts[i].x);
+        int y_curr = (int)lroundf(pts[i].y);
+
+        raster_line(img, x_prev, y_prev, x_curr, y_curr, val);
+        
+        x_prev = x_curr;
+        y_prev = y_curr;
+    }
+}
 
 
 
