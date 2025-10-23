@@ -45,7 +45,7 @@ int main(){
 
 
 
-    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl"); // best for my machine (Intel Mac)
+    // SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl"); // best for my machine (Intel Mac)
 
     // not checking SDL objects for failure - but working fine so far lol
     SDL_Init(SDL_INIT_VIDEO);
