@@ -205,7 +205,67 @@ int fourier_1d(uint8_t *canvas, size_t width, size_t height, int num_terms){
     return 1;
 }
 
+// resamples evenly along the polyline
+// wasn't necessary for 1D as you could use pixel coordinate
+int uniform_pts_polyline(const Polyline *pl, Pt *output, size_t num_output){
+    if(!pl || !output || num_output < 2) return 0;
 
+    Vec2 *pts = pl->pts;
+    int num_pts = pl->len;
+    if (num_pts < 2) return 0;
+
+    double *length_arr = malloc(sizeof(double) * (num_pts + 1));
+    if (!length_arr) return 0;
+
+    // length_arr[i] gives cumulative arclength from first point to ith point
+    length_arr[0] = 0.0;
+    for (size_t i = 1; i < num_pts; ++i){
+        double dx = pts[i].x - pts[i-1].x;
+        double dy = pts[i].y - pts[i-1].y;
+        length_arr[i] = length_arr[i-1] + sqrt(dx*dx + dy*dy);
+    }
+
+    // accounts for loop closing
+    double dx = pts[0].x - pts[num_pts-1].x;
+    double dy = pts[0].y - pts[num_pts-1].y;
+    length_arr[num_pts] = length_arr[num_pts-1] + sqrt(dx*dx + dy*dy);
+
+    double total_length = length_arr[num_pts];
+
+    // check for overflow here?
+
+    size_t segment = 0; // current segment index
+    size_t final_idx = num_pts;
+
+    // NB num_output is points in output pts arr
+    for (size_t i = 0; i < num_output; ++i){
+        // target arclength position
+        double target_length = (total_length * i) / num_output;
+
+        // advance until you reach original point before length becomes greater
+        while (segment + 1 <= final_idx && length_arr[segment + 1] <= target_length){
+            segment ++;
+        }
+
+        // wrap endpoints (just in case)
+        size_t i0 = segment % num_pts;
+        size_t i1 = (segment + 1) % num_pts;
+        Vec2 A = pts[i0];
+        Vec2 B = pts[i1];
+
+        double d_arclength = length_arr[segment + 1] - length_arr[segment];
+        if (d_arclength < DBL_EPSILON) d_arclength = DBL_EPSILON; // prevents divide by zero
+
+        double scale = (target_length - length_arr[segment]) / d_arclength;
+
+        output[i].x = A.x + scale * (B.x - A.x);
+        output[i].y = A.y + scale * (B.y - A.y);
+    }
+
+
+    free(length_arr);
+    return 1;
+}
 
 //better to do it from polyline in this case I think
 int fourier_2d_from_pl(uint8_t *canvas, size_t width, size_t height, int num_terms, const Polyline *pl) {
