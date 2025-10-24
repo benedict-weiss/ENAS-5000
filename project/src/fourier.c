@@ -5,6 +5,7 @@
 // returns 0 if multiplication causes size_t overflow
 // otherwise returns 1 if you can safely multiply
 // result in output parameter *out
+// probably overkill but initially had crashing issues and thought this may have been an issue
 int safe_multiply(size_t a, size_t b, size_t *out) {
     if (!out) return 0;
     if (a == 0 || b == 0) {
@@ -269,6 +270,8 @@ int uniform_pts_polyline(const Polyline *pl, Pt *output, size_t num_output){
 
 typedef struct { double re, im; } complex_t;
 
+// WRITE OUT IN LATEX FOR CLARITY
+
 // compute 2d fourier descriptors (mostly based of second link found online)
 // https://users.cs.utah.edu/~tch/CS6640/lectures/Weeks5-6/Zahn-Roskies.pdf
 // https://link.springer.com/chapter/10.1007/978-1-84882-919-0_6 (specifically chapter 6)
@@ -321,6 +324,37 @@ void compute_fourier_descriptors(const Pt *input, size_t num_pts, int K, complex
     }
 }
 
+// hard to transcribe equations into code readably haha
+void reconstruct_series_2d(const complex_t *input, int K, size_t num_samples, Pt *output){
+    for (size_t r = 0; r < num_samples; ++r){
+        // normalised around loop
+        double t = (double)r / (double)num_samples; // nb have to cast here
+
+        // start at centroid
+        double x = input[K].re;
+        double y = input[K].im;
+
+        double twopit = 2 * M_PI * t;
+
+        for (int k = 1; k <= K; ++k){
+
+            double theta = twopit * k;
+            complex_t c_pos = input[K+k];
+            complex_t c_neg = input[K-k];
+
+            // not the most readable, but adds contributions from pos / neg k
+            x += c_pos.re * cos(theta) - c_pos.im * sin(theta);
+            y += c_pos.re * sin(theta) + c_pos.im * cos(theta);
+            x += c_neg.re * cos(theta) + c_neg.im * sin(theta);
+            y += -c_neg.re * sin(theta) + c_neg.im * cos(theta);
+
+        }
+
+        output[r].x = x;
+        output[r].y = y;
+
+    }
+}
 
 //better to do it from polyline in this case I think
 int fourier_2d_from_pl(uint8_t *canvas, size_t width, size_t height, int num_terms, const Polyline *pl) {

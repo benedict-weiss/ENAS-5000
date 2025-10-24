@@ -7,6 +7,8 @@
 #include <math.h>
 #include <float.h>
 
+// careful with M_PI
+
 #include "geometry.h"
 
 typedef struct {
