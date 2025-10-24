@@ -267,6 +267,61 @@ int uniform_pts_polyline(const Polyline *pl, Pt *output, size_t num_output){
     return 1;
 }
 
+typedef struct { double re, im; } complex_t;
+
+// compute 2d fourier descriptors (mostly based of second link found online)
+// https://users.cs.utah.edu/~tch/CS6640/lectures/Weeks5-6/Zahn-Roskies.pdf
+// https://link.springer.com/chapter/10.1007/978-1-84882-919-0_6 (specifically chapter 6)
+void compute_fourier_descriptors(const Pt *input, size_t num_pts, int K, complex_t *output){
+    // first, compute centroid
+    double mean_x = 0.0;
+    double mean_y = 0.0;
+    for (size_t i = 0; i < num_pts; ++i){
+        mean_x += input[i].x;
+        mean_y += input[i].y;
+    }
+    mean_x /= num_pts;
+    mean_y /= num_pts;
+
+    // intialise output array
+    for (int i = 0; i < 2 * K + 1; ++i){
+        output[i].re = 0.0;
+        output[i].im = 0.0;
+    }
+
+    // store centroid as coefficient of zero frequency component (ie in middle of array)
+    output[K].re = mean_x;
+    output[K].im = mean_y;
+
+    double twopioverm = 2 * M_PI / num_pts;
+
+    for (int k = -K; k <= K; ++k){
+        if (k == 0) continue; // skips term defined above
+        
+        double sum_re = 0.0;
+        double sum_im = 0.0;
+
+        for (size_t m = 0; m < num_pts; ++m){
+        
+            // centred
+            double x_re = input[m].x - mean_x;
+            double y_im = input[m].y - mean_y;
+
+            double theta = -twopioverm * k * m;
+
+            sum_re += x_re * cos(theta) - y_im * sin(theta);
+            sum_im += x_re * sin(theta) + y_im * cos(theta);
+
+        }
+
+        // normalise by sample num
+        output[k+K].re = sum_re / num_pts;
+        output[k+K].im = sum_im / num_pts;
+
+    }
+}
+
+
 //better to do it from polyline in this case I think
 int fourier_2d_from_pl(uint8_t *canvas, size_t width, size_t height, int num_terms, const Polyline *pl) {
     return 0;
