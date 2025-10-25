@@ -2,6 +2,10 @@
 
 #include "raster.h" // maybe not great from file structure perspective
 
+#define MIN_SAMPLE_DENSITY 128
+#define MAX_SAMPLE_DENSITY 4096
+#define CURVE_DENSITY 4
+
 // returns 0 if multiplication causes size_t overflow
 // otherwise returns 1 if you can safely multiply
 // result in output parameter *out
@@ -358,5 +362,57 @@ void reconstruct_series_2d(const complex_t *input, int K, size_t num_samples, Pt
 
 //better to do it from polyline in this case I think
 int fourier_2d_from_pl(uint8_t *canvas, size_t width, size_t height, int num_terms, const Polyline *pl) {
-    return 0;
+    // general safety checks
+    if (!canvas || !pl || !pl->pts || pl->len < 2 || width == 0 || height == 0) return 0;
+
+    size_t num_pts = pl->len;
+    if (num_pts < MIN_SAMPLE_DENSITY) num_pts = MIN_SAMPLE_DENSITY;
+    if (num_pts > MAX_SAMPLE_DENSITY) num_pts = MAX_SAMPLE_DENSITY;
+
+    Pt *spaced_pts = malloc(sizeof(Pt)*num_pts);
+    if(!spaced_pts) return 0;
+
+    // resamples uniformly (stored in spaced_pts)
+    if (!uniform_pts_polyline(pl, spaced_pts, num_pts)){
+        free(spaced_pts);
+        return 0;
+    }
+
+    // snap last sample to first to avoid gaps
+    spaced_pts[num_pts-1].x = spaced_pts[0].x;
+    spaced_pts[num_pts-1].y = spaced_pts[0].y;
+
+    int K = num_terms;
+    if (K > (num_pts / 2 - 1)) K = num_pts / 2 - 1;
+
+    // initialise complex array for descriptors (as output)
+    complex_t *descriptors = calloc(2*K+1, sizeof(complex_t));
+    if (!descriptors) {
+        free(spaced_pts);
+        return 0;
+    }
+
+    compute_fourier_descriptors(spaced_pts, num_pts, K, descriptors);
+
+    size_t num_samples = num_pts * CURVE_DENSITY;
+
+    Pt *reconstructed = malloc(sizeof(Pt) * num_samples);
+    if(!reconstructed){
+        free(spaced_pts);
+        free(descriptors);
+        return 0;
+    }
+
+    reconstruct_series_2d(descriptors, K, num_samples, reconstructed);
+
+    raster_clear(canvas);
+
+    raster_closed_line_from_pts(canvas, spaced_pts, num_pts, 2);
+    raster_closed_line_from_pts(canvas, reconstructed, num_samples, 1);
+
+    free(spaced_pts);
+    free(descriptors);
+    free(reconstructed);
+    return 1;
+
 }
