@@ -1,5 +1,5 @@
-Repository for ENAS 5000
+# ENAS 5000  
 
-Project: Shape approximation  
-Homeworks: Miscellaneous
+**Ben Weiss ’27**
 
+_General repository for coursework and projects_  
